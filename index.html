@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangWeb</title>
-    <script src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js" type="text/javascript" ></script>
+    <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -15,15 +15,23 @@
 </head>
 <body>
     <input placeholder="your at" id="myat">
-    <button onclick="connectLive();">連線直播間</button>
+    <button onclick="connectLive();setInterval('refresh();', 50000);flv_start();" id="connect_btn">連線直播間</button>
+    <div id="chat" class="pre-scrollable" style="float: right;margin-top: -50;height: 80%;width: 700px;"></div>
+    <div class="input-group mb-3" style="position:fixed;right: 0;width: 700px;top: 500px;">
 
-    <div id="player"></div>
+        <input type="text" class="form-control" id="msg" placeholder="發言吧!">
+        <button class="btn btn-outline-secondary" type="button" onclick="sendmsg();">送出</button>
+    </div>
+    <video id="videoElement" style="width:400px;height:600px;" controls autoplay></video>
 
-
-    <div id="chat" class="pre-scrollable" style="float: right;margin-top: -50%;height: 80%;width: 600px;">
+    <div>
 
     </div>
+
+
+
     
+
 
     <script src="./js/lang.js"></script>
 </body>
