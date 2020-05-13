@@ -1,8 +1,8 @@
 var server = "http://localhost:8080/";
 var token = "f561d7718d02ff4b4e337506522349d3";//接收來html上的value
 var uid = "4855514";//接收來html上的value
-var live_id = "1797163Y68198lWaF";//請更改主播live ID
-var liver_uid = "1797163";//請更改主播UID
+var live_id = "1364668Y71026pq08";//請更改主播live ID
+var liver_uid = "1364668";//請更改主播UID
 var devid = Math.random().toString(36).substr(2, 678) + Date.now().toString(36).substr(4, 585);
 var tk="";
 let xhr = new XMLHttpRequest();
@@ -22,7 +22,7 @@ xhr.addEventListener("load", transferComplete);
 function transferComplete(evt){
     var JDATA = JSON.parse(xhr.responseText);
     if(JDATA.data.live_key == null){
-        alert("主播已結束直播!");
+        //alert("主播已結束直播!");   //需重新啟用DEBUG時先至暫時關閉
     }else{
         var header = {
             "alg": "HS256"
@@ -71,11 +71,11 @@ function connectLive(){//登入直播間，並取得權限及其他使用者傳�
         msg =event.data;
         msg=JSON.parse(msg.replace("42/chat_nsp,",""));
         if(msg[0]=="msg"){
-            document.getElementById("chat").innerHTML+='<div style="background-color: pink;margin: 10px;">'+msg[1].name+"："+msg[1].msg+'</div>';
+            document.getElementById("chat").innerHTML+='<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">'+msg[1].name+"："+msg[1].msg+'</div>';
             console.log('Message from server ', msg[1].name+"："+msg[1].msg);
             document.getElementById("chat").scrollTop =  document.getElementById("chat").scrollHeight;
         }else if(msg[0]=="join"){
-            document.getElementById("chat").innerHTML+='<div style="background-color: bisque;margin: 10px;">'+msg[1].name+"[進入直播]"+'</div>';
+            document.getElementById("chat").innerHTML+='<div style="background-color: #F7EFE4;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">'+msg[1].name+"[進入直播]"+'</div>';
             document.getElementById("chat").scrollTop =  document.getElementById("chat").scrollHeight;
         }
     });
@@ -98,7 +98,6 @@ function getvideo(){//取得串流網址
             var flvPlayer = flvjs.createPlayer({
                 type: 'flv',
                 enableWorker: false,
-                lazyLoadMaxDuration: 3 * 60,
                 url: JDATA.data.extra.live_url
             });
             flvPlayer.attachMediaElement(videoElement);
@@ -108,7 +107,7 @@ function getvideo(){//取得串流網址
 }
 function sendmsg(){//傳送使用者所輸入訊息
     var message = $("#msg").val();
-    document.getElementById("chat").innerHTML+='<div style="background-color: pink;margin: 10px;">'+"你"+"："+message+'</div>';
+    document.getElementById("chat").innerHTML+='<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">'+"你"+"："+message+'</div>';
     document.getElementById("msg").value="";
     document.getElementById("chat").scrollTop =  document.getElementById("chat").scrollHeight;
     socket.send('42/chat_nsp,["msg",{"name":"KAHO","grade_id":1,"grade_lvl":5,"lv":3,"lang_fans":"0","award_icon":"","medal":"","msg":"'+message+'","p_ic":"","g_lvl":"0","rel_color_lvl":0,"r_ic":"","n_cr":"#ffffff","rel_color":"#ffffff"}]');
