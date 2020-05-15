@@ -1,4 +1,4 @@
-var server = "https://corrner-node.herokuapp.com/";
+var server = "http://localhost:8080/";
 var token = getParams("token");//接收來html上的value
 var uid = getParams("userid");//接收來html上的value
 var live_id = getParams("live_id"); //請更改主播live ID
@@ -22,18 +22,18 @@ xhr.send();
 xhr.addEventListener("load", transferComplete);
 function transferComplete(evt) {
     var JDATA = JSON.parse(xhr.responseText);
-    if(JDATA.ret_msg == "會話過期"){
+    if (JDATA.ret_msg == "會話過期") {
         document.getElementById("connect_btn").innerText = "尚未登入";
         document.getElementById("connect_btn").setAttribute("disabled", "disabled");
         alert("會話過期,請重新登入");
-    }else{
-        document.getElementById("connect_btn").innerText = "連線直播間";
-        document.getElementById("username").innerText="歡迎，"+JDATA.data.my_info.nickname;
-        document.getElementById("chat").innerHTML='<div style="background-color: #FFCF00;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + "這是" + "：" + JDATA.data.nickname + '的房間</div>';
+    } else {
         //document.getElementById("liver").innerText="這是"+JDATA.data.nickname+"的房間";
         if (JDATA.data.live_key == null) {
             alert("主播已結束直播!或是您所輸入的live_id有誤");   //需重新啟用DEBUG時先至暫時關閉
         } else {
+            document.getElementById("connect_btn").innerText = "連線直播間";
+            document.getElementById("username").innerText = "歡迎，" + JDATA.data.my_info.nickname;
+            document.getElementById("chat").innerHTML = '<div style="background-color: #FFCF00;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + "這是" + "：" + JDATA.data.nickname + '的房間</div>';
             un = JDATA.data.my_info.nickname;
             var header = {
                 "alg": "HS256"
@@ -68,7 +68,7 @@ function transferComplete(evt) {
             //getvideo();
         }
     }
-    
+
 }
 function connectLive() {//登入直播間，並取得權限及其他使用者傳來之訊息
     var tk = $("#myat").val();
@@ -84,7 +84,7 @@ function connectLive() {//登入直播間，並取得權限及其他使用者傳
         msg = JSON.parse(msg.replace("42/chat_nsp,", ""));
         if (msg[0] == "msg") {
             document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;"><b>' + msg[1].name + "</b>：" + msg[1].msg + '</div>';
-            console.log('Message from server ', msg[1].name + "：" + msg[1].msg);
+            //console.log('Message from server ', msg[1].name + "：" + msg[1].msg);
             document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
         } else if (msg[0] == "join") {
             document.getElementById("chat").innerHTML += '<div style="background-color: #F7EFE4;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + msg[1].name + "[進入直播]" + '</div>';
@@ -97,7 +97,6 @@ function connectLive() {//登入直播間，並取得權限及其他使用者傳
 }
 function getvideo() {//取得串流網址
     let xhr = new XMLHttpRequest();
-    var vdl = "";
     xhr.open('GET', server + 'https://langapi.lv-show.com/v2/h5/data?id=22&live_id=' + live_id);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send();
@@ -132,7 +131,7 @@ function sendmsg() {//傳送使用者所輸入訊息
     document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + "你" + "：" + message + '</div>';
     document.getElementById("msg").value = "";
     document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
-    socket.send('42/chat_nsp,["msg",{"name":"'+un+'","grade_id":1,"grade_lvl":5,"lv":3,"lang_fans":"0","award_icon":"","medal":"","msg":"' + message + '","p_ic":"","g_lvl":"0","rel_color_lvl":0,"r_ic":"","n_cr":"#ffffff","rel_color":"#ffffff"}]');
+    socket.send('42/chat_nsp,["msg",{"name":"' + un + '","grade_id":1,"grade_lvl":5,"lv":3,"lang_fans":"0","award_icon":"","medal":"","msg":"' + message + '","p_ic":"","g_lvl":"0","rel_color_lvl":0,"r_ic":"","n_cr":"#ffffff","rel_color":"#ffffff"}]');
 }
 function refresh() {//refresh避免直播間聊天斷線
     socket.send('2');
@@ -162,3 +161,27 @@ function getParams(name, href) {
     }
     return value;
 };
+function hotWord() { //罐頭訊息loader
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', server + 'https://langapi.lv-show.com/v2/hot_word/list');
+    xhr.setRequestHeader('PLATFORM', 'WEB');
+    xhr.setRequestHeader('LOCALE', 'TW');
+    xhr.setRequestHeader('USER-TOKEN', token);
+    xhr.setRequestHeader('VERSION', '5.0.0.7');
+    xhr.setRequestHeader('API-VERSION', '2.0');
+    xhr.setRequestHeader('USER-UID', uid);
+    xhr.setRequestHeader('DEVICE-ID', devid);
+    xhr.setRequestHeader('USER-MPHONE-OS-VER', '9');
+    xhr.setRequestHeader('VERSION-CODE', '1280');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send("pfid=" + liver_uid + "&type=1");
+    xhr.addEventListener("load", transferComplete);
+    function transferComplete(evt) {
+        let JDATA = JSON.parse(xhr.responseText);
+        for (i = (JDATA.data.list.length - 1); 0 < i; i--) {
+            let name = JDATA.data.list[i].name;
+            let content = JDATA.data.list[i].content;
+            document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').attr('value', '${content}')">${name}</button>`
+        }
+    }
+}
