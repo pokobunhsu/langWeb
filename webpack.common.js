@@ -30,10 +30,15 @@ const config = {
     new HtmlWebpackPlugin({
       appMountId: 'app',
       template: "index.html",
-      filename: 'index.html'
+      filename: 'index.html',
+      version: "beta_weekly_0515",
     }),
     new MiniCssExtractPlugin(),
   ]
 };
 
-module.exports = config;
+const define = {
+  'CROS_SERVER': JSON.stringify("http://localhost:8080/"),
+}
+
+module.exports = {config, define };

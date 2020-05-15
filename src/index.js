@@ -1,7 +1,7 @@
 import "./styles.scss";
 
 
-var server = "http://localhost:8080/";
+var server = CROS_SERVER;
 var token = getParams("token");//接收來html上的value
 var uid = getParams("userid");//接收來html上的value
 var live_id = getParams("live_id"); //請更改主播live ID
