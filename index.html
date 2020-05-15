@@ -6,46 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangWeb</title>
     <!-- <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/sisyphus.js/1.1.3/sisyphus.min.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 
 <body>
-    直播版本:beta_weekly_0515|<span id="liver"></span>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-4 col-sm-6" style="width: 100%;background-color: aquamarine;text-align: center;">
-                <span id="username"></span>
-                <button class="btn btn-primary" style="margin: 5px;"
-                    onclick="connectLive();setInterval('refresh();', 50000);flv_start();getvideo();hotWord();"
-                    id="connect_btn">準備你的資料中...</button>
-                <video id="videoElement" style="width:100%;height:600px;" controls autoplay></video>
-            </div>
-
-            <div class="col-lg-8 col-sm-6" style="height:600px;">
-                <div id="chat" class="pre-scrollable"
-                    style="overflow-y:scroll;overflow-x:hidden;width: 100%;max-height: 650px;">
-
+    <div class="container-lg py-3">
+        直播版本:<%= htmlWebpackPlugin.options.version %>|<span id="liver"></span>
+        <div class="d-flex flex-wrap position-relative">
+            <div class="col col-sm-6 col-lg-4 text-center flex-fill " style="background-color: aquamarine;">
+                <div class="row ">
+                    <span id="username"></span>
+                    <button class="btn btn-primary" style="margin: 5px;"
+                        id="connect_btn">準備你的資料中...</button>
+                        <div class="embed-responsive embed-responsive-9by16">
+                            <video id="videoElement" class="w-100 h-100" controls autoplay></video>
+    
+                        </div>
+                </div>
+                <div class="position-absolute" style="top: 100%; left: 0; right: 0;">
+                    <div class="d-flex">
+                        <input class="col" type="text" class="form-control" id="msg" maxlength="40" placeholder="發言吧!">
+                        <button id="message_send" class="btn btn-outline-secondary col-3">送出</button>
+                    </div>
                 </div>
             </div>
-            <div class="container-fluid">
-                <div class="row">
-                    <input class="col-lg-3" type="text" class="form-control" id="msg" maxlength="40" placeholder="發言吧!">
-                    <button class="btn btn-outline-secondary col-lg-1" onclick="sendmsg();">送出</button>
+
+            <div class="chat-box col col-sm-6 col-lg-8 flex-fill pt-5 pt-sm-0" >
+                <div class="row h-100 w-100 position-relative">
+                    <div id="chat" class="chat-list d-flex flex-column px-2">
+
+                    </div>
                 </div>
             </div>
+
 
             <div id="hotword">
                 <!--按鍵框溢出留言範圍 <button type="button" class="btn btn-light">測試</button> -->
             </div>
-            
-
         </div>
     </div>
 
@@ -53,11 +54,10 @@
     <br>
     <input placeholder="your access token" id="myat" style="visibility: hidden;">
 
-    <video id="videoElement" style="width:400px;height:600px;" controls autoplay></video> -->
+    <!-- <video id="videoElement" style="width:400px;height:600px;" controls autoplay></video> --> 
 
 
 
-    <script src="./js/lang.js?v=3"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-77709295-6"></script>
     <script>

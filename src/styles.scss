@@ -1,0 +1,42 @@
+$primary-color: white;
+$bg: black;
+h1 {
+  color: $primary-color;
+  background-color: $bg;
+}
+@media screen  {
+  .embed-responsive-9by16 {
+    padding-bottom: 177.78%;
+  }
+}
+
+.chat-box{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 600px;
+} 
+.chat-list{
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  overflow-y:scroll;
+  overflow-x:hidden;
+}
+@media (min-width: 576px) {   
+  .chat-box{
+    position: relative;
+    height: auto;
+  } 
+}
+.msg-box-join{
+  background-color: #F7EFE4;
+  word-break: break-all;
+}
+.msg-box-msg{
+  background-color: #B4E89F;
+  word-break: break-all;
+}
