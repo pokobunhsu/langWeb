@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LangWeb</title>
-    <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script>
+    <!-- <script src="http://bilibili.github.io/flv.js/dist/flv.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha256.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64-min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -13,19 +15,23 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
 </head>
+
 <body>
+    直播版本:beta_weekly_0515
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-4" style="width: 100%;background-color: aquamarine;text-align: center;">
-                <button class="btn btn-primary" style="margin: 5px;" onclick="connectLive();setInterval('refresh();', 50000);flv_start();" id="connect_btn">連線直播間</button>
+            <div class="col-lg-4 col-sm-6" style="width: 100%;background-color: aquamarine;text-align: center;">
+                <button class="btn btn-primary" style="margin: 5px;"
+                    onclick="connectLive();setInterval('refresh();', 50000);flv_start();getvideo();"
+                    id="connect_btn">連線直播間</button>
                 <video id="videoElement" style="width:100%;height:600px;" controls autoplay></video>
             </div>
-            <div class="col-lg-3" style="width: 100%;">
-                
+            <div class="col-lg-3 col-sm-1" style="width: 100%;">
+
             </div>
-            <div class="col-lg-5" style="height:600px;">
+            <div class="col-lg-5 col-sm-5" style="height:600px;">
                 <div id="chat" class="pre-scrollable" style="overflow-y:scroll;width: 100%;max-height: 650px;">
-                    
+
                 </div>
             </div>
             <div class="container-fluid">
@@ -35,7 +41,7 @@
                 </div>
             </div>
 
-            
+
         </div>
     </div>
 
@@ -54,9 +60,7 @@
 
 
 
-    
-
-
     <script src="./js/lang.js"></script>
 </body>
+
 </html>
