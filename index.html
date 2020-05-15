@@ -17,29 +17,35 @@
 </head>
 
 <body>
+    <div class="container-lg py-3">
     直播版本:<%= htmlWebpackPlugin.options.version %>|<span id="liver"></span>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-lg-4 col-sm-6" style="width: 100%;background-color: aquamarine;text-align: center;">
+        <div class="d-flex flex-wrap position-relative">
+            <div class="col col-sm-6 col-lg-4 text-center flex-fill " style="background-color: aquamarine;">
+                <div class="row ">
                 <span id="username"></span>
                 <button class="btn btn-primary" style="margin: 5px;"
-                    onclick="connectLive();setInterval('refresh();', 50000);flv_start();getvideo();hotWord();"
                     id="connect_btn">準備你的資料中...</button>
-                <video id="videoElement" style="width:100%;height:600px;" controls autoplay></video>
+                        <div class="embed-responsive embed-responsive-9by16">
+                            <video id="videoElement" class="w-100 h-100" controls autoplay></video>
+    
+                        </div>
+                </div>
+                <div class="position-absolute" style="top: 100%; left: 0; right: 0;">
+                    <div class="d-flex">
+                        <input class="col" type="text" class="form-control" id="msg" maxlength="40" placeholder="發言吧!">
+                        <button id="message_send" class="btn btn-outline-secondary col-3">送出</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-lg-8 col-sm-6" style="height:600px;">
-                <div id="chat" class="pre-scrollable"
-                    style="overflow-y:scroll;overflow-x:hidden;width: 100%;max-height: 650px;">
+            <div class="chat-box col col-sm-6 col-lg-8 flex-fill pt-5 pt-sm-0" >
+                <div class="row h-100 w-100 position-relative">
+                    <div id="chat" class="chat-list d-flex flex-column px-2">
 
                 </div>
             </div>
-            <div class="container-fluid">
-                <div class="row">
-                    <input class="col-lg-3" type="text" class="form-control" id="msg" maxlength="40" placeholder="發言吧!">
-                    <button class="btn btn-outline-secondary col-lg-1" onclick="sendmsg();">送出</button>
-                </div>
             </div>
+
 
             <div id="hotword">
                 <!--按鍵框溢出留言範圍 <button type="button" class="btn btn-light">測試</button> -->
