@@ -27,8 +27,12 @@ function transferComplete(evt) {
         document.getElementById("connect_btn").setAttribute("disabled", "disabled");
         alert("會話過期,請重新登入");
     }else{
+        document.getElementById("connect_btn").innerText = "連線直播間";
+        document.getElementById("username").innerText="歡迎，"+JDATA.data.my_info.nickname;
+        document.getElementById("chat").innerHTML='<div style="background-color: #FFCF00;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + "這是" + "：" + JDATA.data.nickname + '的房間</div>';
+        //document.getElementById("liver").innerText="這是"+JDATA.data.nickname+"的房間";
         if (JDATA.data.live_key == null) {
-            alert("主播已結束直播!");   //需重新啟用DEBUG時先至暫時關閉
+            alert("主播已結束直播!或是您所輸入的live_id有誤");   //需重新啟用DEBUG時先至暫時關閉
         } else {
             un = JDATA.data.my_info.nickname;
             var header = {
@@ -79,7 +83,7 @@ function connectLive() {//登入直播間，並取得權限及其他使用者傳
         msg = event.data;
         msg = JSON.parse(msg.replace("42/chat_nsp,", ""));
         if (msg[0] == "msg") {
-            document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">' + msg[1].name + "：" + msg[1].msg + '</div>';
+            document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;"><b>' + msg[1].name + "</b>：" + msg[1].msg + '</div>';
             console.log('Message from server ', msg[1].name + "：" + msg[1].msg);
             document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
         } else if (msg[0] == "join") {
@@ -136,7 +140,7 @@ function refresh() {//refresh避免直播間聊天斷線
 function flv_start() {//點擊進入直播間後順便開始撥放串流、將按鈕停用並顯示已連線--flv用
     document.getElementById("videoElement").play();
     document.getElementById("connect_btn").innerText = "已連線";
-    document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;">你進入了直播間~</div>';
+    document.getElementById("chat").innerHTML += '<div style="background-color: #B4E89F;margin: 10px;padding: 10px;width: 98%;border-radius: 30px;word-break: break-all;text-align:center;">你進入了直播間~<br>主動打個招呼吧!</div>';
     document.getElementById("connect_btn").setAttribute("disabled", "disabled");
 }
 function getParams(name, href) {
