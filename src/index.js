@@ -1,15 +1,25 @@
 import "./styles.scss";
 
 
-var server = CROS_SERVER;
-var token = getParams("token");//接收來html上的value
-var uid = getParams("userid");//接收來html上的value
-var live_id = getParams("live_id"); //請更改主播live ID
-var liver_uid = getParams("live_uid"); //請更改主播UID
-var devid = Math.random().toString(36).substr(2, 678) + Date.now().toString(36).substr(4, 585);
+import Hls from "hls.js"
+import CryptoJS  from 'crypto-js';
+import Base64 from 'crypto-js/enc-base64';
+import HmacSHA256 from 'crypto-js/hmac-sha256';
+
+
+const server = CROS_SERVER;
+var token 
+var uid 
+var live_id 
+var liver_uid 
+var devid 
 var tk = "";
 var un = "";
-let xhr = new XMLHttpRequest();
+
+let socket
+
+function init(){
+    let xhr = new XMLHttpRequest();
 xhr.open('POST', server + 'https://langapi.lv-show.com/v2/live/enter?live_id=' + live_id + '&prs_id=&anchor_pfid=' + liver_uid);
 xhr.setRequestHeader('PLATFORM', 'WEB');
 xhr.setRequestHeader('LOCALE', 'TW');
@@ -22,9 +32,10 @@ xhr.setRequestHeader('USER-MPHONE-OS-VER', '9');
 xhr.setRequestHeader('VERSION-CODE', '1280');
 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 xhr.send();
-xhr.addEventListener("load", transferComplete);
-function transferComplete(evt) {
+xhr.addEventListener("load", function (evt) {
     var JDATA = JSON.parse(xhr.responseText);
+    console.log(JDATA);
+    
     if (JDATA.ret_msg == "會話過期") {
         document.getElementById("connect_btn").innerText = "尚未登入";
         document.getElementById("connect_btn").setAttribute("disabled", "disabled");
@@ -53,7 +64,7 @@ function transferComplete(evt) {
             var secret = JDATA.data.live_key;//需要來自於上方json資料
             console.log(secret);
             function base64url(source) {
-                encodedSource = CryptoJS.enc.Base64.stringify(source);
+                let encodedSource = Base64.stringify(source);
                 encodedSource = encodedSource.replace(/=+$/, '');
                 encodedSource = encodedSource.replace(/\+/g, '-');
                 encodedSource = encodedSource.replace(/\//g, '_');
@@ -64,15 +75,18 @@ function transferComplete(evt) {
             var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
             var encodedData = base64url(stringifiedData);
             var signature = encodedHeader + "." + encodedData;
-            signature = CryptoJS.HmacSHA256(signature, secret);
+            signature = HmacSHA256(signature, secret);
             signature = base64url(signature);
             tk = encodedHeader + "." + encodedData + "." + signature;
             document.getElementById("myat").value = tk;
             //getvideo();
         }
     }
-
+    connect()
+});
 }
+
+
 function connectLive() {//登入直播間，並取得權限及其他使用者傳來之訊息
     var tk = $("#myat").val();
     socket = new WebSocket('wss://cht-q1.lv-show.com/socket.io/?EIO=3&transport=websocket');
@@ -83,7 +97,7 @@ function connectLive() {//登入直播間，並取得權限及其他使用者傳
         socket.send('42/chat_nsp,["authentication",{"live_id":"' + live_id + '","anchor_pfid":"' + liver_uid + '","access_token":"' + tk + '","token":"' + tk + '","from":"WEB","client_type":"web","r":0}]');
     });
     socket.addEventListener('message', function (event) {
-        msg = event.data;
+        let msg = event.data;       
         msg = JSON.parse(msg.replace("42/chat_nsp,", ""));
         if (msg[0] == "msg") {
             document.getElementById("chat").innerHTML += '<div class="msg-box-msg my-1 px-2 py-1 rounded-pill" ><b>' + msg[1].name + "</b>：" + msg[1].msg + '</div>';
@@ -103,10 +117,9 @@ function getvideo() {//取得串流網址
     xhr.open('GET', server + 'https://langapi.lv-show.com/v2/h5/data?id=22&live_id=' + live_id);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send();
-    xhr.addEventListener("load", transferComplete);
-    function transferComplete(evt) {
+    xhr.addEventListener("load", function (evt) {
         var JDATA = JSON.parse(xhr.responseText);
-        console.log(JDATA.data.extra.live_url);
+        console.log(JDATA.data);
         document.getElementById("videoElement").setAttribute("src", JDATA.data.extra.stream);
         if (Hls.isSupported()) {
             const video = document.getElementById('videoElement');
@@ -127,7 +140,8 @@ function getvideo() {//取得串流網址
         //     flvPlayer.attachMediaElement(videoElement);
         //     flvPlayer.load();        
         // }
-    }
+    });
+    
 }
 function sendmsg() {//傳送使用者所輸入訊息
     var message = $("#msg").val();
@@ -178,13 +192,38 @@ function hotWord() { //罐頭訊息loader
     xhr.setRequestHeader('VERSION-CODE', '1280');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send("pfid=" + liver_uid + "&type=1");
-    xhr.addEventListener("load", transferComplete);
-    function transferComplete(evt) {
+    xhr.addEventListener("load",  function (evt) {
         let JDATA = JSON.parse(xhr.responseText);
         for (i = (JDATA.data.list.length - 1); 0 < i; i--) {
             let name = JDATA.data.list[i].name;
             let content = JDATA.data.list[i].content;
             document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').attr('value', '${content}')">${name}</button>`
         }
-    }
+    });
+
 }
+function connect(){
+    connectLive()
+    setInterval( refresh, 50000)
+    getvideo()
+    flv_start()
+    hotWord()
+}
+
+//
+window.onload = function() {
+    // console.log("window loaded")
+
+    token = getParams("token");//接收來html上的value
+    uid = getParams("userid");//接收來html上的value
+    live_id = getParams("live_id"); //請更改主播live ID
+    liver_uid = getParams("live_uid"); //請更改主播UID
+    devid = Math.random().toString(36).substr(2, 678) + Date.now().toString(36).substr(4, 585);
+    
+
+    document.getElementById("connect_btn").onclick = connect
+    document.getElementById("message_send").onclick = sendmsg
+
+    init()
+
+  };
