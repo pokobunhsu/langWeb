@@ -1,3 +1,6 @@
+import "./styles.scss";
+
+
 var server = "http://localhost:8080/";
 var token = getParams("token");//接收來html上的value
 var uid = getParams("userid");//接收來html上的value
