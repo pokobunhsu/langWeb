@@ -6,6 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const config = {
   entry: './src/index.js',
   output: {
+    publicPath: "/",
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
@@ -32,6 +33,7 @@ const config = {
       template: "index.html",
       filename: 'index.html',
       version: "beta_weekly_0515",
+      hash: true,
     }),
     new MiniCssExtractPlugin(),
   ]

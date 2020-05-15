@@ -4,6 +4,9 @@ const webpack = require('webpack');
 
 module.exports = merge(config, {
   mode: 'production',
+  output: {
+    publicPath: "./",
+    },
   plugins: [
     new webpack.DefinePlugin({
         ...define,
