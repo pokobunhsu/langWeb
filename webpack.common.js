@@ -32,7 +32,7 @@ const config = {
       appMountId: 'app',
       template: "index.html",
       filename: 'index.html',
-      version: "beta_weekly_0515",
+      version: "beta_0516",
       hash: true,
     }),
     new MiniCssExtractPlugin(),

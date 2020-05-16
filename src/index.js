@@ -194,10 +194,10 @@ function hotWord() { //罐頭訊息loader
     xhr.send("pfid=" + liver_uid + "&type=1");
     xhr.addEventListener("load",  function (evt) {
         let JDATA = JSON.parse(xhr.responseText);
-        for (i = (JDATA.data.list.length - 1); 0 < i; i--) {
+        for (let i = (JDATA.data.list.length - 1); 0 < i; i--) {
             let name = JDATA.data.list[i].name;
             let content = JDATA.data.list[i].content;
-            document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').attr('value', '${content}')">${name}</button>`
+            document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').attr('value', '${content}')" style="margin: 2px;border-radius: 30px;">${name}</button>`
         }
     });
 
