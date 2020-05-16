@@ -8,7 +8,7 @@ module.exports = merge(config, {
   plugins: [
     new webpack.DefinePlugin({
         ...define,
-        'CROS_SERVER': JSON.stringify("http://localhost:8080/"),
+        'CROS_SERVER': JSON.stringify("http://localhost:5555/"),
     })
   ]
 });
