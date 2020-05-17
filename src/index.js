@@ -197,7 +197,7 @@ function hotWord() { //罐頭訊息loader
         for (let i = (JDATA.data.list.length - 1); 0 < i; i--) {
             let name = JDATA.data.list[i].name;
             let content = JDATA.data.list[i].content;
-            document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').attr('value', '${content}')" style="margin: 2px;border-radius: 30px;">${name}</button>`
+            document.getElementById("hotword").innerHTML += `<button type="button" class="btn btn-light" onclick="$('#msg').val('${content}')" style="margin: 2px;border-radius: 30px;">${name}</button>`
         }
     });
 
