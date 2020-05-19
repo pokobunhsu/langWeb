@@ -2,88 +2,89 @@ import "./styles.scss";
 
 
 import Hls from "hls.js"
-import CryptoJS  from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import Base64 from 'crypto-js/enc-base64';
 import HmacSHA256 from 'crypto-js/hmac-sha256';
 
 
 const server = CROS_SERVER;
-var token 
-var uid 
-var live_id 
-var liver_uid 
-var devid 
+var token
+var uid
+var live_id
+var liver_uid
+var devid
 var tk = "";
 var un = "";
 
 let socket
 
-function init(){
+function init() {
     let xhr = new XMLHttpRequest();
-xhr.open('POST', server + 'https://langapi.lv-show.com/v2/live/enter?live_id=' + live_id + '&prs_id=&anchor_pfid=' + liver_uid);
-xhr.setRequestHeader('PLATFORM', 'WEB');
-xhr.setRequestHeader('LOCALE', 'TW');
-xhr.setRequestHeader('USER-TOKEN', token);
-xhr.setRequestHeader('VERSION', '5.0.0.7');
-xhr.setRequestHeader('API-VERSION', '2.0');
-xhr.setRequestHeader('USER-UID', uid);
-xhr.setRequestHeader('DEVICE-ID', devid);
-xhr.setRequestHeader('USER-MPHONE-OS-VER', '9');
-xhr.setRequestHeader('VERSION-CODE', '1280');
-xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-xhr.send();
-xhr.addEventListener("load", function (evt) {
-    var JDATA = JSON.parse(xhr.responseText);
-    console.log(JDATA);
-    
-    if (JDATA.ret_msg == "會話過期") {
-        document.getElementById("connect_btn").innerText = "尚未登入";
-        document.getElementById("connect_btn").setAttribute("disabled", "disabled");
-        alert("會話過期,請重新登入");
-    } else {
-        //document.getElementById("liver").innerText="這是"+JDATA.data.nickname+"的房間";
-        if (JDATA.data.live_key == null) {
-            alert("主播已結束直播!或是您所輸入的live_id有誤");   //需重新啟用DEBUG時先至暫時關閉
+    xhr.open('POST', server + 'https://langapi.lv-show.com/v2/live/enter?live_id=' + live_id + '&prs_id=&anchor_pfid=' + liver_uid);
+    xhr.setRequestHeader('PLATFORM', 'WEB');
+    xhr.setRequestHeader('LOCALE', 'TW');
+    xhr.setRequestHeader('USER-TOKEN', token);
+    xhr.setRequestHeader('VERSION', '5.0.0.7');
+    xhr.setRequestHeader('API-VERSION', '2.0');
+    xhr.setRequestHeader('USER-UID', uid);
+    xhr.setRequestHeader('DEVICE-ID', devid);
+    xhr.setRequestHeader('USER-MPHONE-OS-VER', '9');
+    xhr.setRequestHeader('VERSION-CODE', '1280');
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send();
+    xhr.addEventListener("load", function (evt) {
+        var JDATA = JSON.parse(xhr.responseText);
+        liver_uid = JDATA.data.pfid;
+        console.log(liver_uid);
+
+        if (JDATA.ret_msg == "會話過期") {
+            document.getElementById("connect_btn").innerText = "尚未登入";
+            document.getElementById("connect_btn").setAttribute("disabled", "disabled");
+            alert("會話過期,請重新登入");
         } else {
-            document.getElementById("connect_btn").innerText = "連線直播間";
-            document.getElementById("username").innerText = "歡迎，" + JDATA.data.my_info.nickname;
-            document.getElementById("chat").innerHTML = '<div class="my-1 px-2 py-1 rounded-pill"  style="background-color: #FFCF00; word-break: break-all;">' + "這是" + "：" + JDATA.data.nickname + '的房間</div>';
-            un = JDATA.data.my_info.nickname;
-            var header = {
-                "alg": "HS256"
-            };
-            var data = {
-                "access_token": token,
-                "live_id": live_id,
-                "LOCALE": "TW",
-                "pfid": uid,
-                "name": JDATA.data.my_info.nickname,
-                "from": "306",
-                "lang_fans": "0"
-            };
-            var secret = JDATA.data.live_key;//需要來自於上方json資料
-            console.log(secret);
-            function base64url(source) {
-                let encodedSource = Base64.stringify(source);
-                encodedSource = encodedSource.replace(/=+$/, '');
-                encodedSource = encodedSource.replace(/\+/g, '-');
-                encodedSource = encodedSource.replace(/\//g, '_');
-                return encodedSource;
+            //document.getElementById("liver").innerText="這是"+JDATA.data.nickname+"的房間";
+            if (JDATA.data.live_key == null) {
+                alert("主播已結束直播!或是您所輸入的live_id有誤");   //需重新啟用DEBUG時先至暫時關閉
+            } else {
+                document.getElementById("connect_btn").innerText = "連線直播間";
+                document.getElementById("username").innerText = "歡迎，" + JDATA.data.my_info.nickname;
+                document.getElementById("chat").innerHTML = '<div class="my-1 px-2 py-1 rounded-pill"  style="background-color: #FFCF00; word-break: break-all;">' + "這是" + "：" + JDATA.data.nickname + '的房間</div>';
+                un = JDATA.data.my_info.nickname;
+                var header = {
+                    "alg": "HS256"
+                };
+                var data = {
+                    "access_token": token,
+                    "live_id": live_id,
+                    "LOCALE": "TW",
+                    "pfid": uid,
+                    "name": JDATA.data.my_info.nickname,
+                    "from": "306",
+                    "lang_fans": "0"
+                };
+                var secret = JDATA.data.live_key;//需要來自於上方json資料
+                console.log(secret);
+                function base64url(source) {
+                    let encodedSource = Base64.stringify(source);
+                    encodedSource = encodedSource.replace(/=+$/, '');
+                    encodedSource = encodedSource.replace(/\+/g, '-');
+                    encodedSource = encodedSource.replace(/\//g, '_');
+                    return encodedSource;
+                }
+                var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));
+                var encodedHeader = base64url(stringifiedHeader);
+                var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
+                var encodedData = base64url(stringifiedData);
+                var signature = encodedHeader + "." + encodedData;
+                signature = HmacSHA256(signature, secret);
+                signature = base64url(signature);
+                tk = encodedHeader + "." + encodedData + "." + signature;
+                document.getElementById("myat").value = tk;
+                //getvideo();
             }
-            var stringifiedHeader = CryptoJS.enc.Utf8.parse(JSON.stringify(header));
-            var encodedHeader = base64url(stringifiedHeader);
-            var stringifiedData = CryptoJS.enc.Utf8.parse(JSON.stringify(data));
-            var encodedData = base64url(stringifiedData);
-            var signature = encodedHeader + "." + encodedData;
-            signature = HmacSHA256(signature, secret);
-            signature = base64url(signature);
-            tk = encodedHeader + "." + encodedData + "." + signature;
-            document.getElementById("myat").value = tk;
-            //getvideo();
         }
-    }
-    connect()
-});
+        connect()
+    });
 }
 
 
@@ -97,7 +98,7 @@ function connectLive() {//登入直播間，並取得權限及其他使用者傳
         socket.send('42/chat_nsp,["authentication",{"live_id":"' + live_id + '","anchor_pfid":"' + liver_uid + '","access_token":"' + tk + '","token":"' + tk + '","from":"WEB","client_type":"web","r":0}]');
     });
     socket.addEventListener('message', function (event) {
-        let msg = event.data;       
+        let msg = event.data;
         msg = JSON.parse(msg.replace("42/chat_nsp,", ""));
         if (msg[0] == "msg") {
             document.getElementById("chat").innerHTML += '<div class="msg-box-msg my-1 px-2 py-1 rounded-pill" ><b>' + msg[1].name + "</b>：" + msg[1].msg + '</div>';
@@ -141,14 +142,15 @@ function getvideo() {//取得串流網址
         //     flvPlayer.load();        
         // }
     });
-    
+
 }
 function sendmsg() {//傳送使用者所輸入訊息
     var message = $("#msg").val();
     document.getElementById("chat").innerHTML += '<div class="msg-box-msg my-1 px-2 py-1 rounded-pill" >' + "你" + "：" + message + '</div>';
     document.getElementById("msg").value = "";
     document.getElementById("chat").scrollTop = document.getElementById("chat").scrollHeight;
-    socket.send('42/chat_nsp,["msg",{"name":"' + un + '","grade_id":1,"grade_lvl":5,"lv":3,"lang_fans":"0","award_icon":"","medal":"","msg":"' + message + '","p_ic":"","g_lvl":"0","rel_color_lvl":0,"r_ic":"","n_cr":"#ffffff","rel_color":"#ffffff"}]');
+    ocket.send('42/chat_nsp,["msg",{"name":"' + un + '","grade_id":1,"grade_lvl":5,"lv":3,"lang_fans":"0","award_icon":"","medal":"","msg":"' + message + '","p_ic":"","g_lvl":"0","rel_color_lvl":1,"r_ic":"","n_cr":"#0c08ff","rel_color":"#0c08ff"}]');
+    //socket.send('42/chat_nsp,["msg",{"pfid":"3861468","live_id":"3652550Y104122Rev","is_admin":false,"lv":25,"name":"poko🍕格格真的飽了","msg":"龍騎士表示開心XD","medal":"","type":0,"rel_color":"#DFAF5E","n_cr":"#F8BBD0","vip_fan":2,"grade_id":1,"grade_lvl":87,"ugid":1,"uglv":78,"g_lvl":"0","r_ic":"","p_ic":"","lf_type":5,"a_ic":"","is_easter_egg":0,"i_sb_rid":0,"a_sb_rid":0,"at":1589814679994}]');
 }
 function refresh() {//refresh避免直播間聊天斷線
     socket.send('2');
@@ -192,7 +194,7 @@ function hotWord() { //罐頭訊息loader
     xhr.setRequestHeader('VERSION-CODE', '1280');
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.send("pfid=" + liver_uid + "&type=1");
-    xhr.addEventListener("load",  function (evt) {
+    xhr.addEventListener("load", function (evt) {
         let JDATA = JSON.parse(xhr.responseText);
         for (let i = (JDATA.data.list.length - 1); 0 < i; i--) {
             let name = JDATA.data.list[i].name;
@@ -202,16 +204,16 @@ function hotWord() { //罐頭訊息loader
     });
 
 }
-function connect(){
+function connect() {
     connectLive()
-    setInterval( refresh, 50000)
+    setInterval(refresh, 50000)
     getvideo()
     flv_start()
     hotWord()
 }
 
 //
-window.onload = function() {
+window.onload = function () {
     // console.log("window loaded")
 
     token = getParams("token");//接收來html上的value
@@ -219,11 +221,11 @@ window.onload = function() {
     live_id = getParams("live_id"); //請更改主播live ID
     liver_uid = getParams("live_uid"); //請更改主播UID
     devid = Math.random().toString(36).substr(2, 678) + Date.now().toString(36).substr(4, 585);
-    
+
 
     document.getElementById("connect_btn").onclick = connect
     document.getElementById("message_send").onclick = sendmsg
 
     init()
 
-  };
+};
