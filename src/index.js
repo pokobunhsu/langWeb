@@ -141,7 +141,7 @@ function refresh() {//refresh避免直播間聊天斷線
 function flv_start() {//點擊進入直播間後順便開始撥放串流、將按鈕停用並顯示已連線--flv用
     document.getElementById("videoElement").play();
     $('#connect_btn').text("已連線");
-    $('#chat').html('<div class="msg-box-msg my-1 px-2 py-1 rounded-pill text-center" >你進入了直播間~<br>主動打個招呼吧!</div>');
+    $('#chat').html(`${$('#chat').html()}<div class="msg-box-msg my-1 px-2 py-1 rounded-pill text-center" >你進入了直播間~<br>主動打個招呼吧!</div>`);
     $('#connect_btn').attr("disabled", "disabled");
 }
 function getParams(name, href) {
@@ -241,7 +241,7 @@ function room() {
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
                     </div>`);
-                    $('.alert').fadeOut(5000);
+                    $('.alert').fadeOut(10000);
                     // setInterval($('.alert').alert('close'), 4000);
                     console.log(`搶到了${JDATA.data.gold}陽光!`);
                     $('#redpack').hide();
