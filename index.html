@@ -19,6 +19,9 @@
 </head>
 
 <body>
+    <div id="notice">
+    </div>
+
     <div class="container-lg py-3">
         直播版本:<%= htmlWebpackPlugin.options.version %>|<span id="liver"></span>
         <div class="d-flex flex-wrap position-relative">
@@ -55,8 +58,9 @@
         </div>
     </div>
 
-    <div style="text-align:center;position:fixed;right:0;top:0;border-radius: 10px;background-color: azure;" id="redpack">
-        <img src="https://img.icons8.com/color/48/000000/door-opened.png"/><br>
+    <div style="text-align:center;position:fixed;right:0;top:0;border-radius: 10px;background-color: azure;"
+        id="redpack">
+        <img src="https://img.icons8.com/color/48/000000/door-opened.png" /><br>
         <span id="red_time">紅包剩餘時間</span>
     </div>
 
